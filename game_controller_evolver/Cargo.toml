@@ -1,0 +1,6 @@
+[package]
+name = "game_controller_evolver"
+version = "0.1.0"
+edition = "2026"
+description = "Evolving a steno layout that fits on a gaming controller"
+license = "MIT"
