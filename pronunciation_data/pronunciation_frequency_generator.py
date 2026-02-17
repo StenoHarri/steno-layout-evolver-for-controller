@@ -61,7 +61,7 @@ def define_pronunciation_frequencies(word):
             phones = p.split()
             # If it ends in a single S, change it to Z
             if len(phones) > 0 and phones[-1] == "S":
-                phones[-1] = "Z"
+                phones[-1] = "^S"
             new_prons.append(" ".join(phones))
         prons = new_prons
 
