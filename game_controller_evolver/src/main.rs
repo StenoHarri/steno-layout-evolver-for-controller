@@ -1,6 +1,8 @@
 mod load_pronunciations;
+mod genetic_logic;
 
 use load_pronunciations::{load_initial_clusters, load_final_clusters, load_pronunciation_frequency};
+use genetic_logic::keyboard_layout::KeyboardLayout
 
 fn main() {
     println!("Hello, world!");
@@ -18,4 +20,14 @@ fn main() {
     println!("Initial clusters: {:?}", &initial_clusters.keys().take(5).collect::<Vec<_>>());
     println!("Final clusters: {:?}", &final_clusters.keys().take(5).collect::<Vec<_>>());
     println!("Pronunciation freq samples: {:?}", &pronunciation_freq.iter().take(5).collect::<Vec<_>>());
+
+    let initial_population = create_initial_population(
+        &initial_clusters,
+        &final_clusters,
+        3,
+        12,
+    );
+
+    println!("{:#?}", initial_population);
+
 }
