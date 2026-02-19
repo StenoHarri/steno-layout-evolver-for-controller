@@ -1,5 +1,5 @@
 #[derive(Debug, Clone)]
-struct KeyboardLayout {
-    left_chords: Vec<(String, String)>,
-    right_chords: Vec<(String, String)>,
+pub(crate) struct KeyboardLayout {
+    pub(crate) left_chords: Vec<(String, String)>,
+    pub(crate) right_chords: Vec<(String, String)>,
 }

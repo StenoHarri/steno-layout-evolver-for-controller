@@ -2,7 +2,9 @@ mod load_pronunciations;
 mod genetic_logic;
 
 use load_pronunciations::{load_initial_clusters, load_final_clusters, load_pronunciation_frequency};
-use genetic_logic::keyboard_layout::KeyboardLayout
+
+use crate::genetic_logic::population::create_initial_population;
+
 
 fn main() {
     println!("Hello, world!");
@@ -25,7 +27,7 @@ fn main() {
         &initial_clusters,
         &final_clusters,
         3,
-        12,
+        5,
     );
 
     println!("{:#?}", initial_population);
