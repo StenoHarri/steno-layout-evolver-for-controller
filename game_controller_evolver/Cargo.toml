@@ -6,4 +6,6 @@ description = "Evolving a steno layout that fits on a gaming controller"
 license = "MIT"
 
 [dependencies]
+rand = "0.10.0"
 serde = "1.0.228"
+serde_json = "1.0.149"
