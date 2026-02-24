@@ -2,7 +2,7 @@ use rand::RngExt;
 use std::collections::HashMap;
 
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
-use crate::genetic_logic::shared_utils::{random_consonant_cluster, random_joystick_location};
+use crate::genetic_logic::generating_genes::{random_consonant_cluster, random_joystick_location};
 
 pub(crate) fn evolve_population(
     initial_population: &[KeyboardLayout],
