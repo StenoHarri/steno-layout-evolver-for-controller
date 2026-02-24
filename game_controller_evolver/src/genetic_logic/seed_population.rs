@@ -1,6 +1,5 @@
-use rand::{Rng, RngExt};
 use std::collections::HashMap;
-use rand::prelude::IndexedRandom;
+use crate::genetic_logic::shared_utils::{random_consonant_cluster, random_joystick_location};
 
 
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
@@ -12,25 +11,22 @@ pub(crate) fn create_initial_population(
 ) -> Vec<KeyboardLayout> {
     let mut rng = rand::rng();
 
-    let initial_keys: Vec<String> = initial_clusters.keys().cloned().collect();
-    let final_keys: Vec<String> = final_clusters.keys().cloned().collect();
-
     let mut population = Vec::with_capacity(population_size);
 
     for _ in 0..population_size {
         let mut left_chords = Vec::new();
         let mut right_chords = Vec::new();
 
-        // Keep adding chords until we reach max_chords
+        // Keep adding chords until it reaches max_chords
         while left_chords.len() < max_chords {
-            let key = initial_keys.choose(&mut rng).unwrap().clone();
-            let value = generate_value(&mut rng);
+            let key = random_consonant_cluster(&mut rng, initial_clusters);
+            let value = random_joystick_location(&mut rng);
             left_chords.push((key, value));
         }
 
         while right_chords.len() < max_chords {
-            let key = final_keys.choose(&mut rng).unwrap().clone();
-            let value = generate_value(&mut rng);
+            let key = random_consonant_cluster(&mut rng, final_clusters);
+            let value = random_joystick_location(&mut rng);
             right_chords.push((key, value));
         }
 
@@ -41,17 +37,4 @@ pub(crate) fn create_initial_population(
     }
 
     population
-}
-
-
-fn generate_value<R: Rng>(rng: &mut R) -> String {
-    let number = rng.random_range(1..=8).to_string();
-
-    let suffix = match rng.random_range(0..3) {
-        0 => "",
-        1 => "L",
-        _ => "R",
-    };
-
-    format!("{}{}", number, suffix)
 }

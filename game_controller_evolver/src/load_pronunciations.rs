@@ -1,6 +1,5 @@
 use std::fs;
 use std::collections::HashMap;
-use serde_json::Result;
 
 pub type ClusterMap = HashMap<String, f64>;
 pub type PronunciationMap = HashMap<String, HashMap<String, f64>>;

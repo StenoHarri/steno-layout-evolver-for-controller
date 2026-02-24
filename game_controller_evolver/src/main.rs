@@ -3,8 +3,8 @@ mod genetic_logic;
 
 use load_pronunciations::{load_initial_clusters, load_final_clusters, load_pronunciation_frequency};
 
-use crate::genetic_logic::population::create_initial_population;
-
+use crate::genetic_logic::seed_population::create_initial_population;
+use crate::genetic_logic::evolve_population::evolve_population;
 
 fn main() {
     println!("Hello, world!");
@@ -30,6 +30,16 @@ fn main() {
         5,
     );
 
-    println!("{:#?}", initial_population);
+    println!("Initial population: {:#?}", initial_population);
+
+    let evolved_population = evolve_population(
+        &initial_population,
+        &initial_clusters,
+        &final_clusters,
+        100,
+    );
+
+    println!("\nEvolved population: {:#?}", evolved_population);
+
 
 }
