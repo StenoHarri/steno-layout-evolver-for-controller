@@ -14,25 +14,25 @@ pub(crate) fn create_initial_population(
     let mut population = Vec::with_capacity(population_size);
 
     for _ in 0..population_size {
-        let mut left_chords = Vec::new();
-        let mut right_chords = Vec::new();
+        let mut left_chord_genes = Vec::new();
+        let mut right_chord_genes = Vec::new();
 
         // Keep adding chords until it reaches max_chords
-        while left_chords.len() < max_chords {
+        while left_chord_genes.len() < max_chords {
             let key = random_consonant_cluster(&mut rng, initial_clusters);
             let value = random_joystick_location(&mut rng);
-            left_chords.push((key, value));
+            left_chord_genes.push((key, value));
         }
 
-        while right_chords.len() < max_chords {
+        while right_chord_genes.len() < max_chords {
             let key = random_consonant_cluster(&mut rng, final_clusters);
             let value = random_joystick_location(&mut rng);
-            right_chords.push((key, value));
+            right_chord_genes.push((key, value));
         }
 
         population.push(KeyboardLayout {
-            left_chords,
-            right_chords,
+            left_chord_genes: left_chord_genes,
+            right_chord_genes: right_chord_genes,
         });
     }
 

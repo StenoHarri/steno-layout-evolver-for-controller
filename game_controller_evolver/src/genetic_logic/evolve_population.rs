@@ -2,6 +2,7 @@ use rand::RngExt;
 use std::collections::HashMap;
 
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
+use crate::genetic_logic::measured_keyboard_layout::MeasuredKeyboardLayout;
 use crate::genetic_logic::generating_genes::{random_consonant_cluster, random_joystick_location};
 
 pub(crate) fn evolve_population(
@@ -17,7 +18,19 @@ pub(crate) fn evolve_population(
     for _ in 0..max_generations {
 
         // Measure fitness (placeholder)
-        // let measured_population = population_measurer(population);
+        // let measured_population = measure_population(population);
+        let mut measured_population = population
+            .par_iter()
+            .map(|layout| {
+                let fitness = measure_population_fitnesses(layout);
+                (layout.clone(), fitness)
+            })
+            .collect::<Vec<_>>();
+
+        measured_population.sort_by(|a, b| 
+            b.1.partial_cmp(&a.1).unwrap()
+        );
+
 
         // Select top n (placeholder: keep first half)
         let survivors = population
@@ -54,9 +67,9 @@ fn mutate(
     // Decide left or right side
     let mutate_left = rng.random_range(0..2) == 0;
 
-    if mutate_left && !layout.left_chords.is_empty() {
-        let idx = rng.random_range(0..layout.left_chords.len());
-        let gene = &mut layout.left_chords[idx];
+    if mutate_left && !layout.left_chord_genes.is_empty() {
+        let idx = rng.random_range(0..layout.left_chord_genes.len());
+        let gene = &mut layout.left_chord_genes[idx];
 
         if rng.random_range(0..2) == 0 {
             // Mutate key
@@ -66,9 +79,9 @@ fn mutate(
             gene.1 = random_joystick_location(&mut rng);
         }
 
-    } else if !layout.right_chords.is_empty() {
-        let idx = rng.random_range(0..layout.right_chords.len());
-        let gene = &mut layout.right_chords[idx];
+    } else if !layout.right_chord_genes.is_empty() {
+        let idx = rng.random_range(0..layout.right_chord_genes.len());
+        let gene = &mut layout.right_chord_genes[idx];
 
         if rng.random_range(0..2) == 0 {
             gene.0 = random_consonant_cluster(&mut rng, final_clusters);
@@ -76,4 +89,22 @@ fn mutate(
             gene.1 = random_joystick_location(&mut rng);
         }
     }
+}
+
+use rayon::prelude::*;
+
+fn measure_population(
+    population: &[KeyboardLayout],
+) -> Vec<ScoredLayout> {
+
+    population
+        .par_iter()
+        .map(|layout| {
+            let fitness = measure_layout(layout);
+            ScoredLayout {
+                layout: layout.clone(),
+                fitness,
+            }
+        })
+        .collect()
 }

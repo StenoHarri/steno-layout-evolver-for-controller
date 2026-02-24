@@ -17,11 +17,11 @@ fn main() {
 
     let initial_clusters = load_initial_clusters(&initial_path);
     let final_clusters   = load_final_clusters(&final_path);
-    let pronunciation_freq = load_pronunciation_frequency(&freq_path);
+    let words_and_their_frequencies = load_words_and_their_frequenciesuency(&freq_path);
 
     println!("Initial clusters: {:?}", &initial_clusters.keys().take(5).collect::<Vec<_>>());
     println!("Final clusters: {:?}", &final_clusters.keys().take(5).collect::<Vec<_>>());
-    println!("Pronunciation freq samples: {:?}", &pronunciation_freq.iter().take(5).collect::<Vec<_>>());
+    println!("Pronunciation freq samples: {:?}", &words_and_their_frequencies.iter().take(5).collect::<Vec<_>>());
 
     let initial_population = create_initial_population(
         &initial_clusters,
