@@ -5,11 +5,14 @@ use crate::genetic_logic::keyboard_layout::KeyboardLayout;
 use crate::genetic_logic::measured_keyboard_layout::MeasuredKeyboardLayout;
 use crate::genetic_logic::generating_genes::{random_consonant_cluster, random_joystick_location};
 
+use crate::genetic_logic::fitness_function::measure_fitness::measure_layout;
+
 pub(crate) fn evolve_population(
     initial_population: &[KeyboardLayout],
     initial_clusters: &HashMap<String, f64>,
     final_clusters: &HashMap<String, f64>,
     max_generations: usize,
+    words_and_their_frequencies: HashMap<String, HashMap<String, f64>>,
 ) -> Vec<KeyboardLayout> {
 
 
@@ -22,7 +25,7 @@ pub(crate) fn evolve_population(
         let mut measured_population = population
             .par_iter()
             .map(|layout| {
-                let fitness = measure_population_fitnesses(layout);
+                let fitness = measure_layout(layout, words_and_their_frequencies);
                 (layout.clone(), fitness)
             })
             .collect::<Vec<_>>();
@@ -92,19 +95,3 @@ fn mutate(
 }
 
 use rayon::prelude::*;
-
-fn measure_population(
-    population: &[KeyboardLayout],
-) -> Vec<ScoredLayout> {
-
-    population
-        .par_iter()
-        .map(|layout| {
-            let fitness = measure_layout(layout);
-            ScoredLayout {
-                layout: layout.clone(),
-                fitness,
-            }
-        })
-        .collect()
-}

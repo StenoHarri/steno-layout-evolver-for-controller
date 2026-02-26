@@ -17,7 +17,7 @@ fn main() {
 
     let initial_clusters = load_initial_clusters(&initial_path);
     let final_clusters   = load_final_clusters(&final_path);
-    let words_and_their_frequencies = load_words_and_their_frequenciesuency(&freq_path);
+    let words_and_their_frequencies = load_pronunciation_frequency(&freq_path);
 
     println!("Initial clusters: {:?}", &initial_clusters.keys().take(5).collect::<Vec<_>>());
     println!("Final clusters: {:?}", &final_clusters.keys().take(5).collect::<Vec<_>>());
