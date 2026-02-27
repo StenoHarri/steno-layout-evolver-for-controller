@@ -6,7 +6,11 @@ use crate::genetic_logic::fitness_function::genes_into_chords::genes_into_chords
 use crate::genetic_logic::fitness_function::find_matches::find_matches;  
 
 
-pub fn measure_layout(layout: &KeyboardLayout, words_and_their_frequencies: HashMap<String, HashMap<String, f64>>) -> f64 {
+pub fn measure_layout(
+    layout: &KeyboardLayout,
+    words_and_their_frequencies: &HashMap<String, HashMap<String, f64>>,
+    valid_sounds
+) -> f64 {
 
 
 
@@ -18,15 +22,13 @@ pub fn measure_layout(layout: &KeyboardLayout, words_and_their_frequencies: Hash
     ].iter().cloned().collect();
 
 
-    let (left_chords_and_their_mappings, right_chords_and_their_mappings) = genes_into_chords(
-        &layout.left_chord_genes,
-        &layout.right_chord_genes,
-    );
+    let left_chords_and_their_mappings = genes_into_chords(&layout.left_chord_genes);
+    let right_chords_and_their_mappings = genes_into_chords(&layout.right_chord_genes);
 
     let (coverage, collisions) = find_matches(
-        left_chords,
+        left_chords_and_their_mappings,
         vowels,
-        right_chords,
+        right_chords_and_their_mappings,
         words_and_their_frequencies,
     );
 

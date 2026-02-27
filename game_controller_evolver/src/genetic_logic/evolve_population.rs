@@ -25,7 +25,7 @@ pub(crate) fn evolve_population(
         let mut measured_population = population
             .par_iter()
             .map(|layout| {
-                let fitness = measure_layout(layout, words_and_their_frequencies);
+                let fitness = measure_layout(layout, &words_and_their_frequencies);
                 (layout.clone(), fitness)
             })
             .collect::<Vec<_>>();

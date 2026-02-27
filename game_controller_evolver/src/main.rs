@@ -37,6 +37,7 @@ fn main() {
         &initial_clusters,
         &final_clusters,
         100,
+        words_and_their_frequencies,
     );
 
     println!("\nEvolved population: {:#?}", evolved_population);
