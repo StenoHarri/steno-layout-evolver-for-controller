@@ -1,5 +1,5 @@
 use rand::RngExt;
-use std::collections::HashMap;
+use std::collections::{HashSet, HashMap};
 
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
 use crate::genetic_logic::measured_keyboard_layout::MeasuredKeyboardLayout;
@@ -15,6 +15,7 @@ pub(crate) fn evolve_population(
     words_and_their_frequencies: HashMap<String, HashMap<String, f64>>,
 ) -> Vec<KeyboardLayout> {
 
+    let valid_sounds: HashSet<String> = words_and_their_frequencies.keys().cloned().collect();
 
     let mut population = initial_population.to_vec();
 
@@ -25,7 +26,7 @@ pub(crate) fn evolve_population(
         let mut measured_population = population
             .par_iter()
             .map(|layout| {
-                let fitness = measure_layout(layout, &words_and_their_frequencies);
+                let fitness = measure_layout(layout, &words_and_their_frequencies, &valid_sounds);
                 (layout.clone(), fitness)
             })
             .collect::<Vec<_>>();
