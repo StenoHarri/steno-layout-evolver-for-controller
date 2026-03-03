@@ -69,10 +69,10 @@ fn generate_explicit_chords(
 
     let mut map: HashMap<String, Vec<Vec<String>>> = HashMap::new();
 
-    for (location, cluster) in genes { // For every gene, stick its cluster at a given location
-        map.entry(location)
+    for (cluster, location) in genes { // swap names
+        map.entry(location)               // location is the key
             .or_insert_with(Vec::new)
-            .push(vec![cluster]);
+            .push(vec![cluster]);        // cluster is the value
     }
     map
 }
@@ -109,10 +109,6 @@ fn generate_implied_chords(
                     if !explicit_strings.contains(&combined_string)
                         && valid_sounds.contains(&combined_string)
                     {
-                        println!("Cluster 1: {:#?}", cluster1);
-                        println!("Cluster 2: {:#?}", cluster2);
-                        println!("Combined: {:#?}", combined_string);
-
                         implied_chords
                             .entry((location1.clone(), location2.clone()))
                             .or_insert_with(Vec::new)
@@ -173,11 +169,6 @@ fn generate_sandwich_chords(
                                 && !implied_strings.contains(&combined_string)
                                 && valid_sounds.contains(&combined_string)
                                 {
-                                    println!("Cluster 1: {:#?}", cluster1);
-                                    println!("Cluster 2: {:#?}", cluster2);
-                                    println!("Cluster 3: {:#?}", cluster3);
-                                    println!("Combined: {:#?}", combined_string);
-
                                     sandwich_chords
                                         .entry((location1.clone(), location2.clone()))
                                         .or_insert_with(Vec::new)

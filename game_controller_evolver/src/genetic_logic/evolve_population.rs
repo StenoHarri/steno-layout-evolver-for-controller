@@ -21,6 +21,8 @@ pub(crate) fn evolve_population(
 
     for _ in 0..max_generations {
 
+        println!("new generation");
+
         // Measure fitness (placeholder)
         // let measured_population = measure_population(population);
         let mut measured_population = population

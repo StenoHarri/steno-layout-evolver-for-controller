@@ -36,11 +36,11 @@ fn main() {
         &initial_population,
         &initial_clusters,
         &final_clusters,
-        100,
+        10,
         words_and_their_frequencies,
     );
 
-    println!("\nEvolved population: {:#?}", evolved_population);
+    println!("\nEvolved population: {:#?}", evolved_population.get(0));
 
 
 }
