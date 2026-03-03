@@ -30,7 +30,7 @@ pub(crate) fn genes_into_chords(
     
 
     // define the different types of chords
-    let explicit_chords = generate_explicit_chords(genes.clone());
+    let explicit_chords = generate_explicit_chords(genes);
     let implied_chords = generate_implied_chords(&explicit_chords, &valid_sounds);
     let sandwich_chords = generate_sandwich_chords(&explicit_chords, &implied_chords, &valid_sounds);
 
@@ -64,15 +64,15 @@ pub(crate) fn genes_into_chords(
 
 
 fn generate_explicit_chords(
-    genes: Vec<(String, String)>,
+    genes: &[(String, String)],
 ) -> HashMap<String, Vec<Vec<String>>> {
 
     let mut map: HashMap<String, Vec<Vec<String>>> = HashMap::new();
 
     for (cluster, location) in genes { // swap names
-        map.entry(location)               // location is the key
+        map.entry(location.clone())               // location is the key
             .or_insert_with(Vec::new)
-            .push(vec![cluster]);        // cluster is the value
+            .push(vec![cluster.clone()]);        // cluster is the value
     }
     map
 }
@@ -82,15 +82,16 @@ fn generate_implied_chords(
     valid_sounds: &HashSet<String>,
 ) -> HashMap<(String, String), Vec<Vec<String>>> {
 
-    let mut implied_chords: HashMap<(String, String), Vec<Vec<String>>> = HashMap::new();
+    let mut implied_chords  = HashMap::new();
 
 
     // not too confident this is doing what I want, but lets me do if !explicit_strings.contains(&combined_string)
-    let explicit_strings: HashSet<String> = explicit_chords
-        .values()
-        .flat_map(|v| v.iter())
-        .map(|c| c.join(" "))
-        .collect();
+    let explicit_set: HashSet<Vec<String>> =
+        explicit_chords
+            .values()
+            .flat_map(|v| v.iter())
+            .cloned()
+            .collect();
     
     for (location1, clusters1) in explicit_chords {
         for (location2, clusters2) in explicit_chords {
@@ -100,13 +101,15 @@ fn generate_implied_chords(
 
 
                     // combine the clusters
-                    let mut combined = cluster1.clone();
-                    combined.extend(cluster2.clone());
+                    let mut combined = Vec::with_capacity(
+                        cluster1.len() + cluster2.len()
+                    );
 
-                    let combined_string = format!("{} {}", cluster1.join(" "), cluster2.join(" "));
+                    combined.extend_from_slice(cluster1);
+                    combined.extend_from_slice(cluster2);
 
                     // make sure it's not already an explicit chord
-                    if !explicit_strings.contains(&combined_string)
+                    if !explicit_set.contains(&combined)
                         //&& valid_sounds.iter().any(|s| 
                         //    s.starts_with(&combined_string) || s.ends_with(&combined_string)
                         //)
@@ -114,7 +117,7 @@ fn generate_implied_chords(
                         implied_chords
                             .entry((location1.clone(), location2.clone()))
                             .or_insert_with(Vec::new)
-                            .push(vec![combined_string]);
+                            .push(combined);
                     }
                 }
             }
@@ -131,20 +134,22 @@ fn generate_sandwich_chords(
     valid_sounds: &HashSet<String>,
 ) -> HashMap<(String, String), Vec<Vec<String>>> {
 
-    let mut sandwich_chords: HashMap<(String, String), Vec<Vec<String>>> = HashMap::new();
+    let mut sandwich_chords = HashMap::new();
     
     // Precompute explicit strings
-    let explicit_strings: HashSet<String> = explicit_chords
+    let explicit_set: HashSet<Vec<String>> =
+    explicit_chords
         .values()
         .flat_map(|v| v.iter())
-        .map(|c| c.join(" "))
+        .cloned()
         .collect();
 
     // Precompute implied strings
-    let implied_strings: HashSet<String> = implied_chords
+    let implied_set: HashSet<Vec<String>> =
+    implied_chords
         .values()
         .flat_map(|v| v.iter())
-        .map(|c| c.join(" "))
+        .cloned()
         .collect();
 
 
@@ -160,15 +165,17 @@ fn generate_sandwich_chords(
 
 
                             // combine the clusters
-                            let mut combined = cluster1.clone();
-                            combined.extend(cluster2.clone());
-                            combined.extend(cluster3.clone());
+                            let mut combined = Vec::with_capacity(
+                                cluster1.len() + cluster2.len() + cluster3.len()
+                            );
 
-                            let combined_string = format!("{} {}", cluster1.join(" "), cluster2.join(" "));
+                            combined.extend_from_slice(cluster1);
+                            combined.extend_from_slice(cluster2);
+                            combined.extend_from_slice(cluster3);
 
                             // make sure it's not already an explicit or implicit chord
-                            if !explicit_strings.contains(&combined_string)
-                                && !implied_strings.contains(&combined_string)
+                            if !explicit_set.contains(&combined)
+                                && !implied_set.contains(&combined)
                                 //&& valid_sounds.iter().any(|s| 
                                 //    s.starts_with(&combined_string) || s.ends_with(&combined_string)
                                 //)
@@ -184,7 +191,7 @@ fn generate_sandwich_chords(
             }
         }
     }
-        sandwich_chords
+    sandwich_chords
 
 } 
 
