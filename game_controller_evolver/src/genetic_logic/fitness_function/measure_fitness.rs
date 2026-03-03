@@ -23,7 +23,7 @@ pub fn measure_layout(
     let left_chords_and_their_mappings = genes_into_chords(&layout.left_chord_genes, valid_sounds);
     let right_chords_and_their_mappings = genes_into_chords(&layout.right_chord_genes, valid_sounds);
 
-    println!("Left chords and their mappings: {:?}", &left_chords_and_their_mappings);
+    // println!("Left chords and their mappings: {:?}", &left_chords_and_their_mappings);
 
     // let (coverage, collisions) = find_matches(
     //     left_chords_and_their_mappings,

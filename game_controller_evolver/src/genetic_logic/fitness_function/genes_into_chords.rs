@@ -103,16 +103,18 @@ fn generate_implied_chords(
                     let mut combined = cluster1.clone();
                     combined.extend(cluster2.clone());
 
-                    let combined_string = combined.join(" "); // I think?
+                    let combined_string = format!("{} {}", cluster1.join(" "), cluster2.join(" "));
 
                     // make sure it's not already an explicit chord
                     if !explicit_strings.contains(&combined_string)
-                        && valid_sounds.contains(&combined_string)
+                        //&& valid_sounds.iter().any(|s| 
+                        //    s.starts_with(&combined_string) || s.ends_with(&combined_string)
+                        //)
                     {
                         implied_chords
                             .entry((location1.clone(), location2.clone()))
                             .or_insert_with(Vec::new)
-                            .push(combined);
+                            .push(vec![combined_string]);
                     }
                 }
             }
@@ -162,12 +164,14 @@ fn generate_sandwich_chords(
                             combined.extend(cluster2.clone());
                             combined.extend(cluster3.clone());
 
-                            let combined_string = combined.join(" ");
+                            let combined_string = format!("{} {}", cluster1.join(" "), cluster2.join(" "));
 
                             // make sure it's not already an explicit or implicit chord
                             if !explicit_strings.contains(&combined_string)
                                 && !implied_strings.contains(&combined_string)
-                                && valid_sounds.contains(&combined_string)
+                                //&& valid_sounds.iter().any(|s| 
+                                //    s.starts_with(&combined_string) || s.ends_with(&combined_string)
+                                //)
                                 {
                                     sandwich_chords
                                         .entry((location1.clone(), location2.clone()))
