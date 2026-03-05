@@ -32,7 +32,10 @@ pub(crate) fn genes_into_chords(
     // define the different types of chords
     let explicit_chords = generate_explicit_chords(genes);
     let implied_chords = generate_implied_chords(&explicit_chords, &valid_sounds);
-    let sandwich_chords = generate_sandwich_chords(&explicit_chords, &implied_chords, &valid_sounds);
+    
+    // too expensive to work out sandwich_chords, maybe on a layout that's near finalised?
+    let sandwich_chords: HashMap<(String, String), Vec<Vec<String>>> = HashMap::new();
+    //let sandwich_chords = generate_sandwich_chords(&explicit_chords, &implied_chords, &valid_sounds);
 
 
     // add the chords to one place
