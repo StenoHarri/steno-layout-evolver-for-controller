@@ -11,11 +11,10 @@ pub(crate) fn evolve_population(
     initial_population: &[KeyboardLayout],
     initial_clusters: &HashMap<String, f64>,
     final_clusters: &HashMap<String, f64>,
+    valid_sounds: &HashSet<String>,
     max_generations: usize,
     words_and_their_frequencies: HashMap<String, HashMap<String, f64>>,
 ) -> Vec<KeyboardLayout> {
-
-    let valid_sounds: HashSet<String> = words_and_their_frequencies.keys().cloned().collect();
 
     let mut population = initial_population.to_vec();
 
