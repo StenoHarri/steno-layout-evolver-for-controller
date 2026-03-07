@@ -1,5 +1,17 @@
 use std::collections::{HashMap, HashSet};
 
+fn zipf_to_prob(zipf: f64) -> f64 {
+    10f64.powf(zipf - 6.0)
+}
+
+fn prob_to_zipf(p: f64) -> f64 {
+    if p > 0.0 {
+        6.0 + p.log10()
+    } else {
+        0.0
+    }
+}
+
 pub fn find_matches(
     left_chords: &HashMap<(String, String), Vec<Vec<String>>>,
     vowels: &HashSet<String>,
@@ -7,61 +19,70 @@ pub fn find_matches(
     words_and_their_frequencies: &HashMap<String, HashMap<String, f64>>,
 ) -> (f64, f64) {
 
-    // Store combinations that have been used
-    let mut used_combinations: HashSet<String> = HashSet::new();
-    let mut collisions = 0;
+    let mut already_seen_words: HashSet<String> = HashSet::new();
+
+    let mut coverage_score = 0.0;
+    let mut conflict_score = 0.0;
 
     // Iterate over the left chords
     for (joystick1_location, joystick1_clusters) in left_chords {
 
-        for joystick1_cluster in joystick1_clusters {
+        // Iterate over the right chords
+        for (joystick2_location, joystick2_clusters) in right_chords {
 
-            // Iterate over the right chords
-            for (joystick2_location, joystick2_clusters) in right_chords {
+            // Iterate over vowels
+            for vowel in vowels {
 
-                for joystick2_cluster in joystick2_clusters {
+                let mut words_that_all_share_this_mapping: Vec<(String, f64)> = Vec::new();
 
-                    // Iterate over vowels
-                    for vowel in vowels {
+                    for joystick1_cluster in joystick1_clusters {
+                        for joystick2_cluster in joystick2_clusters {
 
-                        // Construct the key by combining left, vowel, and right
-                        let combination = format!(
-                            "{} {} {}", 
-                            joystick1_cluster.join(" "),
-                            vowel, 
-                            joystick2_cluster.join(" "),
-                        );
+                            // Construct the key by combining left, vowel, and right
+                            let full_pronunciation = format!(
+                                "{} {} {}", 
+                                joystick1_cluster.join(" "),
+                                vowel, 
+                                joystick2_cluster.join(" "),
+                            );
 
-                        //println!("a combination: {:#?}", combination);
-
-                        // Check if the combination is in the words_and_their_frequencies
-                        if let Some(word_map) = words_and_their_frequencies.get(&combination) {
-                            // Found a valid match, now we need to check for collisions
-                            
-                            //for (word, zipf_frequency) in word_map {
-
-
-                            if used_combinations.contains(&combination) {
-                                // This combination has already been used, so it's a collision
-                                collisions += 1;
-                            } else {
-                                // Record the combination as used
-
-                                //println!("Novel combination: {:#?}", combination);
-
-                                used_combinations.insert(combination);
-
+                            // if this pronunciation is a word, add it
+                            if let Some(word_map) = words_and_their_frequencies.get(&full_pronunciation) {
+                            for (word, zipf) in word_map {
+                                words_that_all_share_this_mapping.push((word.clone(), *zipf));
                             }
                         }
+                    }
+                }
+
+                if words_that_all_share_this_mapping.is_empty() {
+                    continue;
+                }
+
+                // Sort by probability descending so the most common word can "win" the collision
+                words_that_all_share_this_mapping.sort_by(|a, b| {
+                    zipf_to_prob(b.1)
+                        .partial_cmp(&zipf_to_prob(a.1))
+                        .unwrap()
+                });
+
+                // all unseen words contribute to the coverage score
+                // all words other than the first, contribute to the conflict score
+                for (i, (word, zipf)) in words_that_all_share_this_mapping.iter().enumerate() {
+                    let prob = zipf_to_prob(*zipf);
+                    if !already_seen_words.contains(word) {
+                        coverage_score += prob;
+                        already_seen_words.insert(word.clone());
+                    }
+
+                    if i > 0 {
+                        conflict_score += prob;
                     }
                 }
             }
         }
     }
 
-    // coverage
-    let coverage = (used_combinations.len() as f64) / (words_and_their_frequencies.len() as f64);
+    (coverage_score, conflict_score)
 
-    // Return coverage and collisions
-    (coverage, collisions as f64)
 }
