@@ -102,6 +102,8 @@ def remove_vowels_but_keep_main(pron):
     Also, replace first vowel in any vowel–vowel sequence with Y/W
     (before vowel removal), transferring primary stress if needed.
     """
+    #Treat secondary stress as simply unstressed
+    pron = pron.replace("2", "0").replace("3", "0")
 
     #Merge NG G into just NG
     pron = pron.replace("NG G", "NG")
@@ -183,12 +185,33 @@ def remove_vowels_but_keep_main(pron):
             replace_first_vowel_with_glide(phones, i)
         i += 1
 
-    # Drop unstressed vowels
-    kept = []
+    # I'm wanting to only keep vowels that are 1: stressed 2: the first sound or 3: the final sound
+    vowel_indices = [i for i, p in enumerate(phones) if is_vowel(p)]
+    if not vowel_indices:
+        return " ".join(phones)
+
+    first_vowel = vowel_indices[0]
+    last_vowel = vowel_indices[-1]
+
+    primary = None
+    for i in vowel_indices:
+        if "1" in phones[i]:
+            primary = i
+            break
+
+    last_vowel = vowel_indices[-1] if vowel_indices[-1] == len(phones)-1 else None
+    keep = {first_vowel}
+    if primary is not None:
+        keep.add(primary)
+    if last_vowel is not None:
+        keep.add(last_vowel)
+
+    # Build final reduced pronunciation
+    reduced = []
     for i, ph in enumerate(phones):
-        if not is_vowel(ph) or i == 0 or i == len(phones) - 1 or "1" in ph:
-            kept.append(ph[:2])
-    return " ".join(kept)
+        if not is_vowel(ph) or i in keep:
+            reduced.append(ph[:2])  # strip stress info
+    return " ".join(reduced)
 
 
 # I'm doing this so when a mutation grabs a new cluster it's a cluster that will actually contribute to the fitness
@@ -305,17 +328,24 @@ if __name__ == "__main__":
         if common_final_clusters_frequencies[c] > 2:
             common_final_clusters_frequencies[c] = 2.0
 
+
     with open(COMMON_INITIAL_CLUSTERS_FREQUENCIES_FILE, "w", encoding="utf-8") as f:
         json.dump(common_initial_clusters_frequencies, f, indent=2)
+    print(f"Written to {COMMON_INITIAL_CLUSTERS_FREQUENCIES_FILE}")
+
+
     with open(INITIAL_CLUSTERS_FILE, "w", encoding="utf-8") as f:
         json.dump(list(initial_clusters.keys()), f, indent=2)
-
+    print(f"Written to {INITIAL_CLUSTERS_FILE}")
 
     with open(COMMON_FINAL_CLUSTERS_FREQUENCIES_FILE, "w", encoding="utf-8") as f:
         json.dump(common_final_clusters_frequencies, f, indent=2)
+    print(f"Written to {COMMON_FINAL_CLUSTERS_FREQUENCIES_FILE}")
+
     with open(FINAL_CLUSTERS_FILE, "w", encoding="utf-8") as f:
         json.dump(list(final_clusters.keys()), f, indent=2)
-
-    print(f"Written to {PRON_FREQ_FILE}")
-    print(f"Written to {INITIAL_CLUSTERS_FILE}")
     print(f"Written to {FINAL_CLUSTERS_FILE}")
+
+    with open(PRON_FREQ_FILE, "w", encoding="utf-8") as f:
+        json.dump((pron_freq_map), f, indent=2)
+    print(f"Written to {PRON_FREQ_FILE}")
