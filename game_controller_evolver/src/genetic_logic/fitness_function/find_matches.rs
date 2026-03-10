@@ -4,14 +4,6 @@ fn zipf_to_prob(zipf: f64) -> f64 {
     10f64.powf(zipf - 6.0)
 }
 
-fn prob_to_zipf(p: f64) -> f64 {
-    if p > 0.0 {
-        6.0 + p.log10()
-    } else {
-        0.0
-    }
-}
-
 pub fn find_matches(
     left_chords: &HashMap<(String, String), Vec<String>>,
     vowels: &[&str],
@@ -27,10 +19,10 @@ pub fn find_matches(
     let mut full_pronunciation = String::with_capacity(64);
 
     // Iterate over the left chords
-    for (joystick1_location, joystick1_clusters) in left_chords {
+    for (_, joystick1_clusters) in left_chords {
 
         // Iterate over the right chords
-        for (joystick2_location, joystick2_clusters) in right_chords {
+        for (_, joystick2_clusters) in right_chords {
 
             // Iterate over vowels
             for vowel in vowels {

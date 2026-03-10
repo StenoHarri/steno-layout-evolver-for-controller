@@ -1,10 +1,7 @@
 use rand::RngExt;
 use std::collections::{HashSet, HashMap};
-
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
-use crate::genetic_logic::measured_keyboard_layout::MeasuredKeyboardLayout;
 use crate::genetic_logic::generating_genes::{random_consonant_cluster, random_joystick_location};
-
 use crate::genetic_logic::fitness_function::measure_fitness::measure_layout;
 
 pub(crate) fn evolve_population(

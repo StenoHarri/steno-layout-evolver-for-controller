@@ -91,6 +91,7 @@ fn generate_implied_chords(
     implied_chords
 }
 
+#[allow(dead_code)] // this is just too computationally expensive
 fn generate_sandwich_chords(
     explicit_chords: &HashMap<String, Vec<String>>,
     implied_chords: &HashMap<(String, String), Vec<String>>,

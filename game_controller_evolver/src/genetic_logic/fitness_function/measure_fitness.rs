@@ -1,7 +1,6 @@
 // src/genetic_logic/fitness_function/measure_fitness.rs
 use std::collections::{HashSet, HashMap};
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
-use crate::genetic_logic::measured_keyboard_layout::MeasuredKeyboardLayout;
 use crate::genetic_logic::fitness_function::genes_into_chords::genes_into_chords;
 use crate::genetic_logic::fitness_function::find_matches::find_matches;  
 
