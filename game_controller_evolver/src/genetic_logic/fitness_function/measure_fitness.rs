@@ -35,5 +35,7 @@ pub fn measure_layout(
         &words_and_their_frequencies,
     );
 
-    0.0
+    // I think this is a good fitness score?
+    coverage - collisions
+
 }
