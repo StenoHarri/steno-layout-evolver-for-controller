@@ -34,7 +34,7 @@ pub(crate) fn random_consonant_cluster<R: Rng>(
             let start = rng.random_range(0..chars.len());
             let end = rng.random_range(start + 1..=chars.len());
 
-            return chars[start..end].iter().collect();
+            return chars[start..end].iter().collect::<String>().trim().to_string();
         }
     }
 

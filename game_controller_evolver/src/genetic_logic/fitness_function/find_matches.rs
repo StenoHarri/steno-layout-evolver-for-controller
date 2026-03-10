@@ -13,9 +13,9 @@ fn prob_to_zipf(p: f64) -> f64 {
 }
 
 pub fn find_matches(
-    left_chords: &HashMap<(String, String), Vec<Vec<String>>>,
-    vowels: &HashSet<String>,
-    right_chords: &HashMap<(String, String), Vec<Vec<String>>>,
+    left_chords: &HashMap<(String, String), Vec<String>>,
+    vowels: &[&str],
+    right_chords: &HashMap<(String, String), Vec<String>>,
     words_and_their_frequencies: &HashMap<String, HashMap<String, f64>>,
 ) -> (f64, f64) {
 
@@ -23,6 +23,8 @@ pub fn find_matches(
 
     let mut coverage_score = 0.0;
     let mut conflict_score = 0.0;
+
+    let mut full_pronunciation = String::with_capacity(64);
 
     // Iterate over the left chords
     for (joystick1_location, joystick1_clusters) in left_chords {
@@ -39,12 +41,12 @@ pub fn find_matches(
                         for joystick2_cluster in joystick2_clusters {
 
                             // Construct the key by combining left, vowel, and right
-                            let full_pronunciation = format!(
-                                "{} {} {}", 
-                                joystick1_cluster.join(" "),
-                                vowel, 
-                                joystick2_cluster.join(" "),
-                            );
+                            full_pronunciation.clear();
+                            full_pronunciation.push_str(joystick1_cluster);
+                            full_pronunciation.push(' ');
+                            full_pronunciation.push_str(vowel);
+                            full_pronunciation.push(' ');
+                            full_pronunciation.push_str(joystick2_cluster);
 
                             // if this pronunciation is a word, add it
                             if let Some(word_map) = words_and_their_frequencies.get(&full_pronunciation) {
