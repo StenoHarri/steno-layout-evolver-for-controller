@@ -7,12 +7,15 @@ from tqdm import tqdm
 from collections import Counter
 
 # input
-WORD_LIST_FILE = "pronunciation_data\words.txt"
+WORD_LIST_FILE = "pronunciation_data/words.txt"
 
 #output
-PRON_FREQ_FILE = "pronunciation_data\pronunciation_frequency.json"
-INITIAL_CLUSTERS_FILE = "pronunciation_data\initial_clusters.json"
-FINAL_CLUSTERS_FILE = "pronunciation_data\\final_clusters.json"
+PRON_FREQ_FILE = "pronunciation_data/pronunciation_frequency.json"
+COMMON_INITIAL_CLUSTERS_FREQUENCIES_FILE = "pronunciation_data/common_initial_clusters_frequencies.json"
+INITIAL_CLUSTERS_FILE = "pronunciation_data/initial_clusters.json"
+
+COMMON_FINAL_CLUSTERS_FREQUENCIES_FILE = "pronunciation_data/common_final_clusters_frequencies.json"
+FINAL_CLUSTERS_FILE = "pronunciation_data/final_clusters.json"
 
 # Load or generate word list
 def load_word_list():
@@ -284,8 +287,8 @@ if __name__ == "__main__":
 
 
     MIN_CLUSTER_FREQ = 0.17
-    initial_clusters = {c: f for c, f in initial_clusters.items() if f >= MIN_CLUSTER_FREQ}
-    final_clusters   = {c: f for c, f in final_clusters.items()   if f >= MIN_CLUSTER_FREQ}
+    common_initial_clusters_frequencies = {c: f for c, f in initial_clusters.items() if f >= MIN_CLUSTER_FREQ}
+    common_final_clusters_frequencies   = {c: f for c, f in final_clusters.items()   if f >= MIN_CLUSTER_FREQ}
 
     #Squish everything above 3.5 down to 3.5
     for pron, words_dict in pron_freq_map.items():
@@ -294,20 +297,24 @@ if __name__ == "__main__":
                 words_dict[w] = 3.5
 
     #Same here, but at 2
-    for c in initial_clusters:
-        if initial_clusters[c] > 2:
-            initial_clusters[c] = 2.0
+    for c in common_initial_clusters_frequencies:
+        if common_initial_clusters_frequencies[c] > 2:
+            common_initial_clusters_frequencies[c] = 2.0
 
-    for c in final_clusters:
-        if final_clusters[c] > 2:
-            final_clusters[c] = 2.0
+    for c in common_final_clusters_frequencies:
+        if common_final_clusters_frequencies[c] > 2:
+            common_final_clusters_frequencies[c] = 2.0
 
-    with open(PRON_FREQ_FILE, "w", encoding="utf-8") as f:
-        json.dump(pron_freq_map, f, indent=2)
+    with open(COMMON_INITIAL_CLUSTERS_FREQUENCIES_FILE, "w", encoding="utf-8") as f:
+        json.dump(common_initial_clusters_frequencies, f, indent=2)
     with open(INITIAL_CLUSTERS_FILE, "w", encoding="utf-8") as f:
-        json.dump(initial_clusters, f, indent=2)
+        json.dump(list(initial_clusters.keys()), f, indent=2)
+
+
+    with open(COMMON_FINAL_CLUSTERS_FREQUENCIES_FILE, "w", encoding="utf-8") as f:
+        json.dump(common_final_clusters_frequencies, f, indent=2)
     with open(FINAL_CLUSTERS_FILE, "w", encoding="utf-8") as f:
-        json.dump(final_clusters, f, indent=2)
+        json.dump(list(final_clusters.keys()), f, indent=2)
 
     print(f"Written to {PRON_FREQ_FILE}")
     print(f"Written to {INITIAL_CLUSTERS_FILE}")

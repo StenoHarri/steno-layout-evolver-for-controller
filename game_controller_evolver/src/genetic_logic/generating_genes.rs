@@ -4,6 +4,8 @@ use rand::RngExt;
 use rand::distr::weighted::WeightedIndex;
 use rand::distr::Distribution;
 
+// each gene is formed of a consonant cluster, which has a location on the joystick
+
 pub(crate) fn random_consonant_cluster<R: Rng>(
     rng: &mut R,
     clusters: &std::collections::HashMap<String, f64>,

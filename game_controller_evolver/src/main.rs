@@ -1,45 +1,47 @@
 mod load_pronunciations;
 mod genetic_logic;
 
-use load_pronunciations::{load_initial_clusters, load_final_clusters, load_pronunciation_frequency};
+use load_pronunciations::PronunciationData;
+use std::collections::HashSet;
 
 use crate::genetic_logic::seed_population::create_initial_population;
 use crate::genetic_logic::evolve_population::evolve_population;
 
 fn main() {
     println!("Hello, world!");
-    
+
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
 
-    let initial_path = format!("{}/../pronunciation_data/initial_clusters.json", manifest_dir);
-    let final_path   = format!("{}/../pronunciation_data/final_clusters.json", manifest_dir);
-    let freq_path    = format!("{}/../pronunciation_data/pronunciation_frequency.json", manifest_dir);
+    let pronunciation_data = PronunciationData::load(manifest_dir);
 
-    let initial_clusters = load_initial_clusters(&initial_path);
-    let final_clusters   = load_final_clusters(&final_path);
-    let pronunciation_freq = load_pronunciation_frequency(&freq_path);
+    let combined_clusters: HashSet<String> = [
+        pronunciation_data.initial_clusters.clone(),
+        pronunciation_data.final_clusters.clone(),
+    ]
+    .concat()
+    .into_iter()
+    .collect();
 
-    println!("Initial clusters: {:?}", &initial_clusters.keys().take(5).collect::<Vec<_>>());
-    println!("Final clusters: {:?}", &final_clusters.keys().take(5).collect::<Vec<_>>());
-    println!("Pronunciation freq samples: {:?}", &pronunciation_freq.iter().take(5).collect::<Vec<_>>());
 
     let initial_population = create_initial_population(
-        &initial_clusters,
-        &final_clusters,
-        3,
-        5,
+        &pronunciation_data.common_initial_cluster_freqs,
+        &pronunciation_data.common_final_cluster_freqs,
+        10,
+        100,
     );
 
     println!("Initial population: {:#?}", initial_population);
 
     let evolved_population = evolve_population(
         &initial_population,
-        &initial_clusters,
-        &final_clusters,
-        100,
+        &pronunciation_data.common_initial_cluster_freqs,
+        &pronunciation_data.common_final_cluster_freqs,
+        &combined_clusters,
+        10,
+        pronunciation_data.full_word_freqs,
     );
 
-    println!("\nEvolved population: {:#?}", evolved_population);
+    println!("\nEvolved population: {:#?}", evolved_population.get(0));
 
 
 }
