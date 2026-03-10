@@ -30,7 +30,7 @@ fn main() {
         100,
     );
 
-    println!("Initial population: {:#?}", initial_population);
+    println!("Initial population: {:#?}", initial_population.get(0));
 
     let evolved_population = evolve_population(
         &initial_population,

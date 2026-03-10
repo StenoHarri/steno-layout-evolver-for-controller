@@ -39,18 +39,15 @@ pub(crate) fn evolve_population(
 
         println!("highest fitness: {}", measured_population[0].1);
 
-        // Select top n (placeholder: keep top quarter)
-        let survivors = measured_population
-            .iter()
-            .take(4)
-            .map(|(layout, _)| layout.clone())
-            .collect::<Vec<_>>();
+        // Take only the fittest individual
+        let fittest_layout = measured_population[0].0.clone();
 
-        // Repopulate with mutation
-        let mut new_population = survivors.clone();
+        // Set the first of the new population as the old winner
+        let mut new_population = vec![fittest_layout.clone()];
 
+        // Fill the rest with mutated copies
         while new_population.len() < population.len() {
-            let mut individual = survivors[0].clone();
+            let mut individual = fittest_layout.clone();
 
             // Randomly choose 1 or 2 mutations
             let mutations = rng.random_range(1..=2);
