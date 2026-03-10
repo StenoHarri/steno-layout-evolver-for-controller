@@ -21,8 +21,24 @@ pub(crate) fn random_consonant_cluster<R: Rng>(
         .expect("Invalid weights");
 
     let index = dist.sample(rng);
+    let cluster = keys[index].clone();
 
-    keys[index].clone().to_string()
+
+    // so as to have vowels on a dedicated cluster for instance, clusters must be split
+    let cut_chance = 0.1;
+
+    if rng.random_bool(cut_chance) {
+        let chars: Vec<char> = cluster.chars().collect();
+
+        if chars.len() > 1 {
+            let start = rng.random_range(0..chars.len());
+            let end = rng.random_range(start + 1..=chars.len());
+
+            return chars[start..end].iter().collect();
+        }
+    }
+
+    cluster.to_string()
 }
 
 pub(crate) fn random_joystick_location<R: Rng>(
