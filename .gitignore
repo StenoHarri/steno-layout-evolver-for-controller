@@ -12,3 +12,7 @@ game_controller_evolver/Cargo.lock
 pronunciation_data/common_final_clusters_frequencies.json
 pronunciation_data/common_initial_clusters_frequencies.json
 .venv
+*.out
+*.err
+*.sh
+
