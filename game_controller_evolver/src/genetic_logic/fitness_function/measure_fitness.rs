@@ -16,7 +16,7 @@ pub fn measure_layout(
     layout: &KeyboardLayout,
     words_and_their_frequencies: &HashMap<String, HashMap<String, f64>>,
     valid_sounds: &HashSet<String>,
-) -> f64 {
+) -> (f64, f64, f64) {
 
 
     let left_chords_and_their_mappings = genes_into_chords(&layout.left_chord_genes, valid_sounds);
@@ -32,6 +32,8 @@ pub fn measure_layout(
     );
 
     // I think this is a good fitness score?
-    coverage - collisions
+    let fitness = coverage - collisions;
+
+    (fitness, coverage, collisions)
 
 }

@@ -11,30 +11,34 @@ pub(crate) fn evolve_population(
     valid_sounds: &HashSet<String>,
     max_generations: usize,
     words_and_their_frequencies: HashMap<String, HashMap<String, f64>>,
-) -> Vec<(KeyboardLayout, f64)> {
+) -> Vec<(KeyboardLayout, (f64, f64, f64))> {
 
     let mut population = initial_population.to_vec();
     let mut rng = rand::rng();
 
-    for _ in 0..max_generations {
+    for current_generation in 0..max_generations {
 
-        println!("new generation");
+        println!("new generation:  {}", current_generation);
 
         // Measure fitness (placeholder)
         // let measured_population = measure_population(population);
         let mut measured_population = population
             .par_iter()
             .map(|layout| {
-                let fitness = measure_layout(layout, &words_and_their_frequencies, &valid_sounds);
-                (layout.clone(), fitness)
+                let scores = measure_layout(layout, &words_and_their_frequencies, &valid_sounds);
+                (layout.clone(), scores) // (fitness, coverage, collisions)
             })
             .collect::<Vec<_>>();
 
+
+
         measured_population.sort_by(|a, b| 
-            b.1.partial_cmp(&a.1).unwrap()
+            b.1.0.partial_cmp(&a.1.0).unwrap() // Sorting by the first score (fitness)
         );
 
-        println!("highest fitness: {}", measured_population[0].1);
+        println!("highest fitness:             {}", measured_population[0].1.0);
+        println!("highest fitness' coverage:   {}", measured_population[0].1.1);
+        println!("highest fitness' collisions: {}", measured_population[0].1.2);
 
         // Take only the fittest individual
         let fittest_layout = measured_population[0].0.clone();
@@ -66,16 +70,18 @@ pub(crate) fn evolve_population(
     let mut measured_population = population
         .par_iter()
         .map(|layout| {
-            let fitness = measure_layout(layout, &words_and_their_frequencies, &valid_sounds);
-            (layout.clone(), fitness)
+            let scores = measure_layout(layout, &words_and_their_frequencies, &valid_sounds);
+            (layout.clone(), scores)
         })
         .collect::<Vec<_>>();
 
     measured_population.sort_by(|a, b| 
-        b.1.partial_cmp(&a.1).unwrap()
+        b.1.0.partial_cmp(&a.1.0).unwrap() // that .0 to sort by fitness
     );
 
-    println!("highest fitness: {}", measured_population[0].1);
+    println!("highest fitness:             {}", measured_population[0].1.0);
+    println!("highest fitness' coverage:   {}", measured_population[0].1.1);
+    println!("highest fitness' collisions: {}", measured_population[0].1.2);
 
     measured_population
 
