@@ -39,7 +39,7 @@ pub(crate) fn genes_into_chords(
     result
 }
 
-fn generate_explicit_chords(
+pub(crate) fn generate_explicit_chords(
     genes: &[(String, String)],
 ) -> HashMap<String, Vec<String>> {
     let mut map: HashMap<String, Vec<String>> = HashMap::new();

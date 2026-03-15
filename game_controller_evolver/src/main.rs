@@ -1,6 +1,7 @@
 mod load_pronunciations;
 mod genetic_logic;
 
+use crate::genetic_logic::fitness_function::genes_into_chords::generate_explicit_chords;
 use load_pronunciations::PronunciationData;
 use std::collections::HashSet;
 
@@ -41,7 +42,13 @@ fn main() {
         pronunciation_data.full_word_freqs,
     );
 
-    println!("\nEvolved population: {:#?}", evolved_population.get(0));
+
+    let evolved_keyboardlayout = &evolved_population[0];
+    println!("\nEvolved population: {:#?}", evolved_keyboardlayout);
+
+
+    println!("\nLeft joystick: {:#?}", generate_explicit_chords(&evolved_keyboardlayout.0.left_chord_genes));
+    println!("\nRight joystick: {:#?}", generate_explicit_chords(&evolved_keyboardlayout.0.right_chord_genes));
 
 
 }
