@@ -36,7 +36,7 @@ pub fn measure_layout(
     );
 
     // I think this is a good fitness score?
-    let fitness = coverage - collisions;
+    let fitness = coverage - (10.0 * collisions as f64);
 
     (fitness, coverage, collisions)
 
