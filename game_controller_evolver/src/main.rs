@@ -1,5 +1,6 @@
 mod load_pronunciations;
 mod genetic_logic;
+use std::time::Duration;
 
 use crate::genetic_logic::fitness_function::genes_into_chords::generate_explicit_chords;
 use load_pronunciations::PronunciationData;
@@ -27,8 +28,8 @@ fn main() {
     let initial_population = create_initial_population(
         &pronunciation_data.common_initial_cluster_freqs,
         &pronunciation_data.common_final_cluster_freqs,
-        10,
         100,
+        128,
     );
 
     println!("Initial population: {:#?}", initial_population.get(0));
@@ -38,13 +39,14 @@ fn main() {
         &pronunciation_data.common_initial_cluster_freqs,
         &pronunciation_data.common_final_cluster_freqs,
         &combined_clusters,
-        10,
+        10000,
+        Duration::from_secs(60*14),
         pronunciation_data.full_word_freqs,
     );
 
 
     let evolved_keyboardlayout = &evolved_population[0];
-    println!("\nEvolved population: {:#?}", evolved_keyboardlayout);
+    //println!("\nEvolved population: {:#?}", evolved_keyboardlayout);
 
 
     println!("\nLeft joystick: {:#?}", generate_explicit_chords(&evolved_keyboardlayout.0.left_chord_genes));

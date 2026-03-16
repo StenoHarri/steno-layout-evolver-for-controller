@@ -3,6 +3,7 @@ use std::collections::{HashSet, HashMap};
 use crate::genetic_logic::keyboard_layout::KeyboardLayout;
 use crate::genetic_logic::generating_genes::{random_consonant_cluster, random_joystick_location};
 use crate::genetic_logic::fitness_function::measure_fitness::measure_layout;
+use std::time::{Duration, Instant};
 
 pub(crate) fn evolve_population(
     initial_population: &[KeyboardLayout],
@@ -10,13 +11,20 @@ pub(crate) fn evolve_population(
     final_clusters: &HashMap<String, f64>,
     valid_sounds: &HashSet<String>,
     max_generations: usize,
+    max_duration: Duration,
     words_and_their_frequencies: HashMap<String, HashMap<String, f64>>,
 ) -> Vec<(KeyboardLayout, (f64, f64, f64))> {
 
     let mut population = initial_population.to_vec();
     let mut rng = rand::rng();
+    let start_time = Instant::now();
 
     for current_generation in 0..max_generations {
+
+        if start_time.elapsed() >= max_duration {
+            println!("Ran out of time after {} generations.", current_generation);
+            break;
+        }
 
         println!("new generation:  {}", current_generation);
 
