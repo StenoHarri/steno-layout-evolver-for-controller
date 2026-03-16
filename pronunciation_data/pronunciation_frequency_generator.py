@@ -62,8 +62,8 @@ def define_pronunciation_frequencies(word):
         new_prons = []
         for p in prons:
             phones = p.split()
-            # If it ends in a single S, change it to Z
-            if len(phones) > 0 and phones[-1] == "S":
+            # If it ends in a single S, give it its own phoneme (later I will merge with Z but with smart arpeggiation logic)
+            if len(phones) > 0 and phones[-1] in ["S","Z"]: #cyclops, eskimos
                 phones[-1] = "^S"
             new_prons.append(" ".join(phones))
         prons = new_prons
@@ -185,32 +185,50 @@ def remove_vowels_but_keep_main(pron):
             replace_first_vowel_with_glide(phones, i)
         i += 1
 
+
+
+    # Some words like "fourteen" have multiple main stresses? Only keep the first
+    found_primary = False
+    for i, ph in enumerate(phones):
+        if "1" in ph:
+            if not found_primary:
+                found_primary = True
+            else:
+                phones[i] = ph.replace("1", "0")
+
+
     # I'm wanting to only keep vowels that are 1: stressed 2: the first sound or 3: the final sound
-    vowel_indices = [i for i, p in enumerate(phones) if is_vowel(p)]
-    if not vowel_indices:
-        return " ".join(phones)
-
-    first_vowel = vowel_indices[0]
-    last_vowel = vowel_indices[-1]
-
-    primary = None
-    for i in vowel_indices:
-        if "1" in phones[i]:
-            primary = i
-            break
-
-    last_vowel = vowel_indices[-1] if vowel_indices[-1] == len(phones)-1 else None
-    keep = {first_vowel}
-    if primary is not None:
-        keep.add(primary)
-    if last_vowel is not None:
-        keep.add(last_vowel)
 
     # Build final reduced pronunciation
     reduced = []
+    last_index = len(phones) - 1
+    if phones[-1] == "^S":
+        last_index-=1
+
     for i, ph in enumerate(phones):
-        if not is_vowel(ph) or i in keep:
-            reduced.append(ph[:2])  # strip stress info
+
+        if not is_vowel(ph):
+            reduced.append(ph)
+            continue
+
+        # Rule 1: primary stress
+        if "1" in ph:
+            reduced.append("vowel")
+            continue
+
+        # Rule 2: first sound
+        if i == 0:
+            reduced.append(ph[:2])
+            continue
+
+        # Rule 3: last sound
+        if i == last_index:
+            reduced.append(ph[:2])
+            continue
+
+        # Rule 4: remove all other vowels
+        #
+ 
     return " ".join(reduced)
 
 
@@ -227,7 +245,8 @@ def extract_clusters(pron):
     initials = []
     finals = []
 
-    vowel_indices = [i for i, p in enumerate(phones) if is_vowel(p)]
+    #vowel_indices = [i for i, p in enumerate(phones) if is_vowel(p)]
+    vowel_indices = [i for i, p in enumerate(phones) if p == "vowel"]
     if not vowel_indices:
         return [], []
 

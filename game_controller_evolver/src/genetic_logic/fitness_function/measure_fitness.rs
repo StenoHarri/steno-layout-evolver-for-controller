@@ -6,10 +6,14 @@ use crate::genetic_logic::fitness_function::find_matches::find_matches;
 
 // Vowels will not be written with the joysticks, I will reuse the 4 vowel keys the stenotype has
 // These can either be the 4 triggers or the 4 paddles, whichever is easiest to hit
+//static VOWELS: &[&str] = &[
+//    "AA","AE","AH","AO","AW","AY",
+//    "EH","ER","EY","IH","IY","OW",
+//    "OY","UH","UW"
+//];
+
 static VOWELS: &[&str] = &[
-    "AA","AE","AH","AO","AW","AY",
-    "EH","ER","EY","IH","IY","OW",
-    "OY","UH","UW"
+    "vowel"
 ];
 
 pub fn measure_layout(
