@@ -49,9 +49,11 @@ pub(crate) fn random_joystick_location<R: Rng>(
     // 1 2 3
     // 4   5
     // 6 7 8
-    // plus a further rotation L or R (optional)
+    // plus a further rotation left or right, big or small
+    // L, R, LL, RR
 
-    // that means 8*3 genes can all have unique locations.
+
+    // that means 8*5 genes can all have unique locations.
     // however hopefully this algorithm will find that 
     // some consonant clusters will be able to share locations.
 
@@ -64,10 +66,12 @@ pub(crate) fn random_joystick_location<R: Rng>(
 
     let number = rng.random_range(1..=8).to_string();
 
-    let suffix = match rng.random_range(0..3) {
+    let suffix = match rng.random_range(0..5) {
         0 => "",
         1 => "L",
-        _ => "R",
+        2 => "R",
+        3 => "LL",
+        _ => "RR",
     };
 
     format!("{}{}", number, suffix)
